@@ -46,7 +46,7 @@ class MySQLProvider implements ProviderInterface{
     		if($this->killCounterDB->connect_error !== ''){
       		$this->getServer->critical("Cant Conncet to DB! contact pines! and forward this error : " . this->db_error");
 		}
-		$this->killCounterDB->query("CREATE TABLE IF NOT EXISTS master (player TEXT PRIMARY KEY COLLATE NOCASE, kills INT, deaths INT)");
+		$this->killCounterDB->query("CREATE TABLE IF NOT EXISTS master (player VARCHAR(50) PRIMARY KEY COLLATE NOCASE, kills INT, deaths INT)");
 	}
 	
 	/**
