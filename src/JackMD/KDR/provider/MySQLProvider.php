@@ -46,18 +46,14 @@ class MySQLProvider implements ProviderInterface{
     		if($this->killCounterDB->connect_error !== ''){
       		$this->getServer->critical("Cant Conncet to DB! contact pines! and forward this error : " . this->db_error");
 		}
-		$this->killCounterDB->exec("CREATE TABLE IF NOT EXISTS master (player TEXT PRIMARY KEY COLLATE NOCASE, kills INT, deaths INT)");
+		$this->killCounterDB->query("CREATE TABLE IF NOT EXISTS master (player TEXT PRIMARY KEY COLLATE NOCASE, kills INT, deaths INT)");
 	}
 	
 	/**
 	 * @param Player $player
 	 */
 	public function registerPlayer(Player $player): void{
-		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
-		$stmt->bindValue(":kills", "0");
-		$stmt->bindValue(":deaths", "0");
-		$stmt->execute();
+		$stmt = $this->killCounterDB->query("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (".$player->getLowerCaseName().", " 0, 0")");
 	}
 	
 	/**
@@ -65,11 +61,7 @@ class MySQLProvider implements ProviderInterface{
 	 * @param int    $points
 	 */
 	public function addDeathPoints(Player $player, int $points = 1): void{
-		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
-		$stmt->bindValue(":kills", $this->getPlayerKillPoints($player));
-		$stmt->bindValue(":deaths", $this->getPlayerDeathPoints($player) + $points);
-		$stmt->execute();
+		$stmt = $this->killCounterDB->query("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (".$player->getLowerCaseName().", ".$this->getPlayerKillPoints($player).", ".$this->getPlayerDeathPoints($player) + $points.")");
 	}
 	
 	/**
@@ -77,11 +69,7 @@ class MySQLProvider implements ProviderInterface{
 	 * @param int    $points
 	 */
 	public function addKillPoints(Player $player, int $points = 1): void{
-		$stmt = $this->killCounterDB->prepare("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (:player, :kills, :deaths)");
-		$stmt->bindValue(":player", $player->getLowerCaseName());
-		$stmt->bindValue(":kills", $this->getPlayerKillPoints($player) + $points);
-		$stmt->bindValue(":deaths", $this->getPlayerDeathPoints($player));
-		$stmt->execute();
+		$stmt = $this->killCounterDB->query("INSERT OR REPLACE INTO master (player, kills, deaths) VALUES (".$player->getLowerCaseName().", ".$this->getPlayerKillPoints($player) + $points.", ".$this->getPlayerDeathPoints($player).")");
 	}
 	
 	/**
@@ -91,7 +79,7 @@ class MySQLProvider implements ProviderInterface{
 	public function playerExists(Player $player): bool{
 		$playerName = $player->getLowerCaseName();
 		$result = $this->killCounterDB->query("SELECT player FROM master WHERE player='$playerName';");
-		$array = $result->fetchArray(SQLITE3_ASSOC);
+		$array = $result->fetchArray(MYSQLI_ASSOC);
 		return empty($array) == false;
 	}
 	
@@ -118,7 +106,7 @@ class MySQLProvider implements ProviderInterface{
 	public function getPlayerKillPoints(Player $player): int{
 		$playerName = $player->getLowerCaseName();
 		$result = $this->killCounterDB->query("SELECT kills FROM master WHERE player = '$playerName'");
-		$resultArray = $result->fetchArray(SQLITE3_ASSOC);
+		$resultArray = $result->fetchArray(MYSQL_ASSOC);
 		return (int) $resultArray["kills"];
 	}
 	
@@ -129,7 +117,7 @@ class MySQLProvider implements ProviderInterface{
 	public function getPlayerDeathPoints(Player $player): int{
 		$playerName = $player->getLowerCaseName();
 		$result = $this->killCounterDB->query("SELECT deaths FROM master WHERE player = '$playerName'");
-		$resultArray = $result->fetchArray(SQLITE3_ASSOC);
+		$resultArray = $result->fetchArray(MYSQL_ASSOC);
 		return (int) $resultArray["deaths"];
 	}
 	
