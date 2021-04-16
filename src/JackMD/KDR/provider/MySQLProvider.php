@@ -43,8 +43,9 @@ class MySQLProvider implements ProviderInterface{
 	
 	public function prepare(): void{
 		$this->killCounterDB = new \mysqli("[host]","[user]","[password]","[db]");
-    if($this->killCounterDB->connect_error){
-      $this->getServer->warning("Cant Conncet to DB" .this->db_errmp")
+    		if($this->killCounterDB->connect_error !== ''){
+      		$this->getServer->critical("Cant Conncet to DB! contact pines! and forward this error : " . this->db_error");
+		}
 		$this->killCounterDB->exec("CREATE TABLE IF NOT EXISTS master (player TEXT PRIMARY KEY COLLATE NOCASE, kills INT, deaths INT)");
 	}
 	
