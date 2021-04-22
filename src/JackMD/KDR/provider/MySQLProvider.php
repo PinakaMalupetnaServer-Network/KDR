@@ -38,7 +38,7 @@ use pocketmine\Player;
 
 class MySQLProvider implements ProviderInterface{
 	
-	/** @var \SQLite3 */
+	/** @var \MySQLi */
 	public $killCounterDB;
 	
 	public function prepare(): void{
@@ -106,7 +106,7 @@ class MySQLProvider implements ProviderInterface{
 	public function getPlayerKillPoints(Player $player): int{
 		$playerName = $player->getLowerCaseName();
 		$result = $this->killCounterDB->query("SELECT kills FROM master WHERE player = '$playerName'");
-		$resultArray = $result->fetchArray(MYSQL_ASSOC);
+		$resultArray = $result->fetchArray(MYSQLI_ASSOC);
 		return (int) $resultArray["kills"];
 	}
 	
@@ -117,7 +117,7 @@ class MySQLProvider implements ProviderInterface{
 	public function getPlayerDeathPoints(Player $player): int{
 		$playerName = $player->getLowerCaseName();
 		$result = $this->killCounterDB->query("SELECT deaths FROM master WHERE player = '$playerName'");
-		$resultArray = $result->fetchArray(MYSQL_ASSOC);
+		$resultArray = $result->fetchArray(MYSQLI_ASSOC);
 		return (int) $resultArray["deaths"];
 	}
 	
