@@ -100,6 +100,10 @@ class KDR extends PluginBase{
 				$provider = new YamlProvider();
 				$this->getLogger()->notice("YamlProvider successfully enabled.");
 				break;
+			case "mysqli":
+				$provider = new MySQLProvider();
+				$this->getLogger()->notice("MySQLProvider successfully enabled.");
+				break;	
 			default:
 				$this->getLogger()->error("Please set a valid data-provider in config.yml. Plugin Disabled");
 				$this->getServer()->getPluginManager()->disablePlugin($this);
